@@ -82,11 +82,11 @@ jobs:
     - name: Install dependencies
       run: |
         brew install gfortran cmake openblas eigen libomp lapack
-        # sudo ln -s /opt/homebrew/bin/gfortran-14 /usr/bin/gfortran
+        sudo ln -s /opt/homebrew/bin/gfortran-14 /opt/homebrew/bin/gfortran
       
     - name: Export Environment Variables
       run: |
-        # ls /opt/homebrew/bin/gfortran*
+        ls /opt/homebrew/bin/gfortran*
         # brew link gcc
         export FC="/opt/homebrew/bin/gfortran-14"
         export CMAKE_Fortran_COMPILER="/opt/homebrew/bin/gfortran-14"
@@ -101,7 +101,7 @@ jobs:
         export CPPFLAGS="-I/opt/homebrew/opt/lapack/include"
         export PKG_CONFIG_PATH="/opt/homebrew/opt/lapack/lib/pkgconfig"
         gfortran-14 --version
-        # which gfortran-14
+        which gfortran-14
         # gcc --version
         # g++ --version
 
