@@ -82,7 +82,7 @@ jobs:
     - name: Install dependencies
       run: |
         brew install gfortran cmake openblas eigen libomp lapack
-        FC = /opt/homebrew/Cellar/gcc/14.2.0_1/bin/gfortran
+        # FC = /opt/homebrew/Cellar/gcc/14.2.0_1/bin/gfortran
         export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
         export PKG_CONFIG_PATH="/opt/homebrew/opt/openblas/lib/pkgconfig"
@@ -96,6 +96,8 @@ jobs:
 
     - name: Check compiler versions
       run: |
+        ls /opt/homebrew/bin/gfortran*
+        brew link gcc
         gfortran --version
         which gfortran
         gcc --version
