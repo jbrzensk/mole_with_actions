@@ -33,21 +33,13 @@ jobs:
         DEFAULT_BRANCH: master
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-MOLE:
+  build-MOLE-ubuntu:
     runs-on: ubuntu-latest
     needs: lint-code
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Cache build directory
-      uses: actions/cache@v3
-      with:
-        path: build
-        key: build-${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          build-${{ runner.os }}-
 
     - name: Update Libraries
       run: sudo apt-get update
@@ -59,53 +51,71 @@ jobs:
         cd /usr/src/googletest && sudo cmake . && sudo make && sudo make install
 
     - name: Create build directory
-      run: mkdir build
+      run: mkdir -p build
 
     - name: Run CMake
       run: cmake -S . -B build
 
     - name: Build MOLE library
       run: cmake --build build
-    # Save for faster testing
-    - name: Save env vars to file
+
+    - name: Run tests
       run: |
-        echo "MY_VAR=some_value" > env_cache.txt
-
-    - name: Cache env file
-      uses: actions/cache@v3
-      with:
-        path: env_cache.txt
-        key: env-${{ runner.os }}-${{ hashFiles('env_cache.txt') }}
-
-  run-tests:
-    runs-on: ubuntu-latest
-    needs: build-MOLE
+        cd build
+        make run_tests
+  
+  build-MOLE-macOSX:
+    runs-on: macOS-latest
+    needs: lint-code
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Restore build cache
-      uses: actions/cache@v3
-      with:
-        path: build
-        key: build-${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          build-${{ runner.os }}-
-          
-    - name: Restore env file
-      uses: actions/cache@v3
-      with:
-        path: env_cache.txt
-        key: env-${{ runner.os }}-${{ hashFiles('env_cache.txt') }}
-        restore-keys: |
-          env-${{ runner.os }}-
+    - name: Update Libraries
+      run: sudo apt-get update
 
-    - name: Load env vars
+    - name: Install dependencies
       run: |
-        set -a
-        source env_cache.txt
-        set +a
+        brew install cmake openblas eigen libomp lapack
+
+    - name: Create build directory
+      run: mkdir -p build
+
+    - name: Run CMake
+      run: cmake -S . -B build
+
+    - name: Build MOLE library
+      run: cmake --build build
+
+    - name: Run tests
+      run: |
+        cd build
+        make run_tests
+
+    build-MOLE-RHEL/Fedora:
+    runs-on: rhel-latest
+    needs: lint-code
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Update Libraries
+      run: sudo yum update
+
+    - name: Install dependencies
+      run: |
+        sudo yum install cmake openblas-devel eigen3-devel
+
+    - name: Create build directory
+      run: mkdir -p build
+
+    - name: Run CMake
+      run: cmake -S . -B build
+
+    - name: Build MOLE library
+      run: cmake --build build
 
     - name: Run tests
       run: |
