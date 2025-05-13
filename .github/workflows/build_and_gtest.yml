@@ -10,29 +10,29 @@ on:
       - '**' 
 
 jobs:
-  # lint-code:
-  #   runs-on: ubuntu-latest
+  lint-code:
+    runs-on: ubuntu-latest
 
-  #   permissions:
-  #     contents: read
-  #     packages: read
-  #     statuses: write
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
       
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         # Full git history is needed to get a proper
-  #         # list of changed files within `super-linter`
-  #         fetch-depth: 0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper
+          # list of changed files within `super-linter`
+          fetch-depth: 0
 
-  #     - name: Run super-linter
-  #       uses: super-linter/super-linter/slim@v5
-  #       env:
-  #         DISABLE_ERRORS: true
-  #         VALIDATE_ALL_CODEBASE: false
-  #         DEFAULT_BRANCH: master
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run super-linter
+        uses: super-linter/super-linter/slim@v5
+        env:
+          DISABLE_ERRORS: true
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-MOLE-ubuntu:
     runs-on: ubuntu-latest
@@ -71,17 +71,10 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    # - name: Fix Homebrew
-    #   run: |
-    #     sudo chown -R $(whoami) /usr/local/Cellar
-    #     git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
-    #     brew uninstall --ignore-dependencies java
-    #     brew update
         
     - name: Install dependencies
       run: |
-        brew install gfortran cmake openblas eigen libomp lapack
+        brew install cmake openblas eigen libomp lapack
         sudo ln -s /opt/homebrew/bin/gfortran-14 /opt/homebrew/bin/gfortran
       
     - name: Export Environment Variables
@@ -99,10 +92,6 @@ jobs:
         export LDFLAGS+=" -L/opt/homebrew/opt/lapack/lib"
         export CPPFLAGS+=" -I/opt/homebrew/opt/lapack/include"
         export PKG_CONFIG_PATH+=" /opt/homebrew/opt/lapack/lib/pkgconfig"
-        gfortran-14 --version
-        which gfortran-14
-        # gcc --version
-        # g++ --version
 
     - name: Create build directory
       run: mkdir -p build
@@ -118,20 +107,37 @@ jobs:
         cd build
         make run_tests
 
-  # Compile-JOSS-paper:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v4
+  Compile-JOSS-paper:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check if subfolder changed
+      id: changes
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        CHANGED=$(git diff --name-only origin/${{ github.base_ref }} HEAD | grep '^doc/papers/' || true)
+        if [ -n "$CHANGED" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi
 
-  #   - name: Build draft PDF
-  #     uses: openjournals/openjournals-draft-action@master
-  #     with:
-  #       journal: joss
-  #       paper-path: doc/papers/joss/paper.md
+    - name: Run build if subfolder changed
+      if: steps.changes.outputs.changed == 'true'
+      run: echo "Building subfolder components..."
 
-  #   - name: Upload a Build Artifact
-  #     uses: actions/upload-artifact@v4
-  #     with:
-  #       name: paper
-  #       path: doc/papers/joss/paper.pdf
+    - name: Build draft PDF
+      if: steps.changes.outputs.changed == 'true'
+      uses: openjournals/openjournals-draft-action@master
+      with:
+        journal: joss
+        paper-path: doc/papers/joss/paper.md
+
+    - name: Upload a Build Artifact
+      if: steps.changes.outputs.changed == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: paper
+        path: doc/papers/joss/paper.pdf
