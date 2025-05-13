@@ -87,6 +87,13 @@ jobs:
         export CPPFLAGS="-I/opt/homebrew/opt/lapack/include"
         export PKG_CONFIG_PATH="/opt/homebrew/opt/lapack/lib/pkgconfig"
 
+    - name: Check compiler versions
+      run: |
+        gfortran --version
+        which gfortran
+        gcc --version
+        g++ --version
+
     - name: Create build directory
       run: mkdir -p build
 
