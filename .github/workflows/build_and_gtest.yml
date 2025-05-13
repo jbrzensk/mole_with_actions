@@ -59,7 +59,7 @@ jobs:
         cd /usr/src/googletest && sudo cmake . && sudo make && sudo make install
 
     - name: Create build directory
-      run: mkdir build
+      run: mkdir -p build
 
     - name: Run CMake
       run: cmake -S . -B build
