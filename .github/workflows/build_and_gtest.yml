@@ -92,33 +92,3 @@ jobs:
       run: |
         cd build
         make run_tests
-
-    build-MOLE-RHEL/Fedora:
-    runs-on: rhel-latest
-    needs: lint-code
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Update Libraries
-      run: sudo yum update
-
-    - name: Install dependencies
-      run: |
-        sudo yum install cmake openblas-devel eigen3-devel
-
-    - name: Create build directory
-      run: mkdir -p build
-
-    - name: Run CMake
-      run: cmake -S . -B build
-
-    - name: Build MOLE library
-      run: cmake --build build
-
-    - name: Run tests
-      run: |
-        cd build
-        make run_tests
-  
