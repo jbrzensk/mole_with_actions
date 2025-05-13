@@ -118,7 +118,9 @@ jobs:
         run: |
           git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
           CHANGED=$(git diff --name-only FETCH_HEAD HEAD | grep '^doc/papers/' || true)
-    
+          echo "Changed="
+          echo $CHANGED
+          
           # git fetch origin ${{ github.base_ref }}
           # CHANGED=$(git diff --name-only origin/${{ github.base_ref }} HEAD | grep '^doc/papers/' || true)
           if [ -n "$CHANGED" ]; then
