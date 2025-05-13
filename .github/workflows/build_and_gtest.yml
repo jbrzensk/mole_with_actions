@@ -19,7 +19,7 @@ jobs:
       
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         # Full git history is needed to get a proper
         # list of changed files within `super-linter`
@@ -39,7 +39,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Update Libraries
       run: sudo apt-get update
@@ -70,10 +70,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Update Libraries
-      run: sudo apt-get update
+      uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
