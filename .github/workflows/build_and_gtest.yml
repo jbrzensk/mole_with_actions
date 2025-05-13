@@ -98,8 +98,8 @@ jobs:
       run: |
         ls /opt/homebrew/bin/gfortran*
         brew link gcc
-        gfortran --version
-        which gfortran
+        gfortran-14 --version
+        which gfortran-14
         gcc --version
         g++ --version
 
