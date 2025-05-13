@@ -82,8 +82,8 @@ jobs:
     - name: Install dependencies
       run: |
         brew install gfortran cmake openblas eigen libomp lapack
-        FC = /opt/homebrew/bin/gfortran-14
-        CMAKE_Fortran_COMPILER = /opt/homebrew/bin/gfortran-14
+        export FC=/opt/homebrew/bin/gfortran-14
+        export CMAKE_Fortran_COMPILER=/opt/homebrew/bin/gfortran-14
         #sudo ln -s /opt/homebrew/bin/gfortran-14 /usr/bin/gfortran
         
         export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
