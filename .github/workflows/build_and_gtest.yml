@@ -66,6 +66,16 @@ jobs:
 
     - name: Build library
       run: cmake --build build
+    # Save for faster testing
+    - name: Save env vars to file
+      run: |
+        echo "MY_VAR=some_value" > env_cache.txt
+
+    - name: Cache env file
+      uses: actions/cache@v3
+      with:
+        path: env_cache.txt
+        key: env-${{ runner.os }}-${{ hashFiles('env_cache.txt') }}
 
   run-tests:
     runs-on: ubuntu-latest
@@ -82,6 +92,20 @@ jobs:
         key: build-${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
         restore-keys: |
           build-${{ runner.os }}-
+          
+    - name: Restore env file
+      uses: actions/cache@v3
+      with:
+        path: env_cache.txt
+        key: env-${{ runner.os }}-${{ hashFiles('env_cache.txt') }}
+        restore-keys: |
+          env-${{ runner.os }}-
+
+    - name: Load env vars
+      run: |
+        set -a
+        source env_cache.txt
+        set +a
 
     - name: Run tests
       run: |
