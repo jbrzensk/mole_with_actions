@@ -82,9 +82,7 @@ jobs:
     - name: Install dependencies
       run: |
         brew install gfortran cmake openblas eigen libomp lapack
-        export FC=/opt/homebrew/bin/gfortran-14
-        export CMAKE_Fortran_COMPILER=/opt/homebrew/bin/gfortran-14
-        #sudo ln -s /opt/homebrew/bin/gfortran-14 /usr/bin/gfortran
+        sudo ln -s /opt/homebrew/bin/gfortran-14 /usr/bin/gfortran
         
         export LDFLAGS="-L/opt/homebrew/opt/openblas/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/openblas/include"
@@ -97,20 +95,22 @@ jobs:
         export CPPFLAGS="-I/opt/homebrew/opt/lapack/include"
         export PKG_CONFIG_PATH="/opt/homebrew/opt/lapack/lib/pkgconfig"
 
-    - name: Check compiler versions
+    - name: Export Environment Variables
       run: |
-        ls /opt/homebrew/bin/gfortran*
-        brew link gcc
-        gfortran-14 --version
-        which gfortran-14
-        gcc --version
-        g++ --version
+        # ls /opt/homebrew/bin/gfortran*
+        # brew link gcc
+        export FC=/opt/homebrew/bin/gfortran-14
+        export CMAKE_Fortran_COMPILER=/opt/homebrew/bin/gfortran-14
+        gfortran --version
+        # which gfortran-14
+        # gcc --version
+        # g++ --version
 
     - name: Create build directory
       run: mkdir -p build
 
     - name: Run CMake
-      run: cmake -S . -B build
+      run: cmake -DCMAKE_Fortran_COMPILER=/opt/homebrew/bin/gfortran-14 -S . -B build
 
     - name: Build MOLE library
       run: cmake --build build
