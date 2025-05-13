@@ -72,6 +72,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Fix Homebrew
+      run: |
+        sudo chown -R $(whoami) /usr/local/Cellar
+        git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow
+        brew uninstall --ignore-dependencies java
+        brew update
+        
     - name: Install dependencies
       run: |
         brew install gfortran cmake openblas eigen libomp lapack
