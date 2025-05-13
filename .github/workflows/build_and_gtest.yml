@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
 
       - name: Run super-linter
-        uses: super-linter/super-linter@v5
+        uses: super-linter/slim@v5
         env:
           DISABLE_ERRORS: true
           VALIDATE_ALL_CODEBASE: false
