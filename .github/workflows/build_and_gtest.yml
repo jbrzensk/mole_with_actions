@@ -1,3 +1,4 @@
+---
 name: Build and Test
 
 on:
@@ -18,20 +19,20 @@ jobs:
       statuses: write
       
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        # Full git history is needed to get a proper
-        # list of changed files within `super-linter`
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper
+          # list of changed files within `super-linter`
+          fetch-depth: 0
 
-    - name: Run super-linter
-      uses: super-linter/super-linter@v5
-      env:
-        DISABLE_ERRORS: true
-        VALIDATE_ALL_CODEBASE: false
-        DEFAULT_BRANCH: master
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run super-linter
+        uses: super-linter/super-linter@v5
+        env:
+          DISABLE_ERRORS: true
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-MOLE-ubuntu:
     runs-on: ubuntu-latest
@@ -46,9 +47,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get install -y cmake g++ libgtest-dev libarmadillo-dev libopenblas-dev libsuperlu-dev libeigen3-dev
-        # Build and install Google Test (if not pre-installed)
-        cd /usr/src/googletest && sudo cmake . && sudo make && sudo make install
+        sudo apt-get install -y cmake g++ libgtest-dev / 
+        libarmadillo-dev libopenblas-dev libsuperlu-dev / 
+        libeigen3-dev
+      # Build and install Google Test (if not pre-installed)
+        cd /usr/src/googletest && sudo cmake .
+        sudo make
+        sudo make install
 
     - name: Create build directory
       run: mkdir -p build
@@ -63,7 +68,7 @@ jobs:
       run: |
         cd build
         make run_tests
-  
+
   build-MOLE-macOSX:
     runs-on: macOS-latest
     needs: lint-code
@@ -74,7 +79,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        brew install cmake openblas eigen libomp lapack
+        brew install gcc cmake openblas eigen libomp lapack
 
     - name: Create build directory
       run: mkdir -p build
