@@ -89,3 +89,21 @@ jobs:
       run: |
         cd build
         make run_tests
+
+  Compile-JOSS-paper:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build draft PDF
+      uses: openjournals/openjournals-draft-action@master
+      with:
+        journal: joss
+        paper-path: doc/papers/joss/paper.md
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: paper
+        path: doc/papers/joss/paper.pdf
